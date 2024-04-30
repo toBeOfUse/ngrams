@@ -3,13 +3,14 @@ pub struct GramIterator<'z, const L: usize> {
     position: usize,
 }
 
-pub trait NGram {
+pub trait NGramString {
     fn char_at_with_stops(&self, index: usize) -> char;
     fn len_with_stops(&self) -> usize;
     fn grams<const L: usize>(&self) -> GramIterator<L>;
+    fn gram_count(&self, gram_length: usize) -> usize;
 }
 
-impl NGram for String {
+impl NGramString for String {
     fn char_at_with_stops(&self, index: usize) -> char {
         if index == 0 {
             '^'
@@ -29,6 +30,10 @@ impl NGram for String {
             string: self,
             position: 0
         }
+    }
+
+    fn gram_count(&self, gram_length: usize) -> usize {
+        (self.len_with_stops() - gram_length + 1).max(0)
     }
 }
 
@@ -51,7 +56,7 @@ impl<'a, const L: usize> Iterator for GramIterator<'a, L> {
 
 #[cfg(test)]
 mod tests {
-    use crate::n_gram_string::NGram;
+    use crate::n_gram_string::NGramString;
 
     #[test]
     fn bigrams() {
@@ -63,6 +68,7 @@ mod tests {
             println!("{:?}", bigram);
             assert_eq!(result[i], bigram);
         }
+        assert_eq!(test.gram_count(2), result.len());
     }
 
     #[test]
@@ -75,6 +81,7 @@ mod tests {
             println!("{:?}", trigram);
             assert_eq!(result[i], trigram);
         }
+        assert_eq!(test.gram_count(3), result.len());
     }
 
     #[test]
@@ -87,6 +94,7 @@ mod tests {
             println!("{:?}", quadgram);
             assert_eq!(result[i], quadgram);
         }
+        assert_eq!(test.gram_count(4), result.len());
     }
 
     #[test]
@@ -99,6 +107,7 @@ mod tests {
             println!("{:?}", trigram);
             assert_eq!(result[i], trigram);
         }
+        assert_eq!(test.gram_count(3), result.len());
     }
 
     #[test]
