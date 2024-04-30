@@ -12,16 +12,16 @@ pub trait NGram {
 impl NGram for String {
     fn char_at_with_stops(&self, index: usize) -> char {
         if index == 0 {
-            return '^';
+            '^'
         } else if index == self.len() + 1 {
-            return '$';
+            '$'
         } else {
-            return self.chars().nth(index-1).unwrap();
+            self.chars().nth(index-1).unwrap()
         }
     }
     
     fn len_with_stops(&self) -> usize {
-        return self.len() + 2;
+        self.len() + 2
     }
     
     fn grams<const L: usize>(&self) -> GramIterator<L> {
